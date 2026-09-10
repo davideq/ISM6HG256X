@@ -1,5 +1,5 @@
 /*
-   @file    ISM6HG256X_6D_Orientation.ino
+   @file    ISM6HG256X_6D_Orientation_I2C.ino
    @author  STMicroelectronics
    @brief   Example to use the ISM6HG256X 6D Orientation.
  *******************************************************************************

@@ -1,7 +1,7 @@
 /*
-   @file    ISM6HG256X_Free_Fall_Detection.ino
+   @file    ISM6HG256X_Wake_Up_Detection_I2C.ino
    @author  STMicroelectronics
-   @brief   Example to use the ISM6HG256X Free Fall Detection.
+   @brief   Example to use the ISM6HG256X Wake Up Detection.
  *******************************************************************************
    Copyright (c) 2025, STMicroelectronics
    All rights reserved.
@@ -11,6 +11,8 @@
                           opensource.org/licenses/BSD-3-Clause
  *******************************************************************************
 */
+
+
 #include <ISM6HG256XSensor.h>
 
 #define INT1_pin 5
@@ -19,8 +21,8 @@ ISM6HG256XSensor ISM6HG256X(&Wire);
 
 //Interrupts.
 volatile int mems_event = 0;
-void INT1Event_cb();
 
+void INT1Event_cb();
 
 void setup()
 {
@@ -42,8 +44,8 @@ void setup()
   ISM6HG256X.begin();
   ISM6HG256X.Enable_X();
 
-  // Enable Free Fall Detection.
-  ISM6HG256X.Enable_Free_Fall_Detection(ISM6HG256X_INT1_PIN);
+  // Enable Wake Up Detection.
+  ISM6HG256X.Enable_Wake_Up_Detection(ISM6HG256X_INT1_PIN);
 }
 
 void loop()
@@ -52,13 +54,13 @@ void loop()
     mems_event = 0;
     ISM6HG256X_Event_Status_t status;
     ISM6HG256X.Get_X_Event_Status(&status);
-
-    if (status.FreeFallStatus) {
+    if (status.WakeUpStatus) {
       // Led blinking.
       digitalWrite(LED_BUILTIN, HIGH);
       delay(100);
       digitalWrite(LED_BUILTIN, LOW);
-      Serial.println("Free Fall Detected!");
+
+      Serial.println("Wake up Detected!");
     }
   }
 }

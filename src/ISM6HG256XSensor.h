@@ -2,8 +2,8 @@
  ******************************************************************************
  * @file    ISM6HG256XSensor.h
  * @author  STMicroelectronics
- * @version V1.0.0
- * @date    05 August 2025
+ * @version V2.1.0
+ * @date    September 2026
  * @brief   Abstract Class of a ISM6HG256X sensor.
  ******************************************************************************
  * @attention
@@ -48,7 +48,22 @@
 #include "Wire.h"
 #include "SPI.h"
 #include "ism6hg256x_reg.h"
+
+#if (defined(I3C1_BASE) || defined(I3C2_BASE)) && !defined(I3C_SUPPORTED)
+  #define I3C_SUPPORTED
+  #include "I3C.h"
+#endif
 /* Defines -------------------------------------------------------------------*/
+#if defined(I3C_SUPPORTED)
+  #define ISM6HG256X_I3C_ADD_L ((uint8_t)(ISM6HG256X_I2C_ADD_L >> 1))
+  #define ISM6HG256X_I3C_ADD_H ((uint8_t)(ISM6HG256X_I2C_ADD_H >> 1))
+#endif
+
+#define ISM6HG256X_I2C_BUS                     0U
+#define ISM6HG256X_SPI_4WIRES_BUS              1U
+#define ISM6HG256X_SPI_3WIRES_BUS              2U
+#define ISM6HG256X_I3C_BUS                     3U
+
 #define ISM6HG256X_ACC_SENSITIVITY_FS_2G    0.061f
 #define ISM6HG256X_ACC_SENSITIVITY_FS_4G    0.122f
 #define ISM6HG256X_ACC_SENSITIVITY_FS_8G    0.244f
@@ -131,9 +146,16 @@ class ISM6HG256XSensor {
   public:
     ISM6HG256XSensor(TwoWire *i2c, uint8_t address = ISM6HG256X_I2C_ADD_L);
     ISM6HG256XSensor(SPIClass *spi, int cs_pin, uint32_t spi_speed = 2000000);
-    ISM6HG256XStatusTypeDef begin();
+#if defined(I3C_SUPPORTED)
+    ISM6HG256XSensor(I3CBus *i3c, uint8_t static_addr7 = 0);
+#endif
+    ISM6HG256XStatusTypeDef begin(uint8_t new_address = 0);
     ISM6HG256XStatusTypeDef end();
     ISM6HG256XStatusTypeDef ReadID(uint8_t *Id);
+#if defined(I3C_SUPPORTED)
+    uint8_t getStaticAddress() const;
+    uint8_t getDynAddress() const;
+#endif
     ISM6HG256XStatusTypeDef Enable_X();
     ISM6HG256XStatusTypeDef Disable_X();
     ISM6HG256XStatusTypeDef Get_X_Sensitivity(float_t *Sensitivity);
@@ -252,6 +274,13 @@ class ISM6HG256XSensor {
         }
         return 0;
       }
+#if defined(I3C_SUPPORTED)
+      if (dev_i3c) {
+        if (dev_i3c->readRegBuffer(address, RegisterAddr, pBuffer, NumByteToRead) == 0) {
+          return 0;
+        }
+      }
+#endif
       return 1;
     }
     /**
@@ -285,6 +314,13 @@ class ISM6HG256XSensor {
         dev_i2c->endTransmission(true);
         return 0;
       }
+#if defined(I3C_SUPPORTED)
+      if (dev_i3c) {
+        if (dev_i3c->writeRegBuffer(address, RegisterAddr, pBuffer, NumByteToWrite) == 0) {
+          return 0;
+        }
+      }
+#endif
       return 1;
     }
   private:
@@ -297,7 +333,11 @@ class ISM6HG256XSensor {
     /* Helper classes. */
     TwoWire  *dev_i2c;
     SPIClass *dev_spi;
+#if defined(I3C_SUPPORTED)
+    I3CBus   *dev_i3c;
+#endif
     /* Configuration */
+    uint32_t bus_type; /*0 means I2C, 1 means SPI 4-Wires, 2 means SPI-3-Wires, 3 means I3C */
     uint8_t  address;
     int      cs_pin;
     uint32_t spi_speed;
@@ -308,6 +348,10 @@ class ISM6HG256XSensor {
     ism6hg256x_data_rate_t        acc_odr;
     ism6hg256x_hg_xl_data_rate_t  acc_hg_odr;
     ism6hg256x_data_rate_t        gyro_odr;
+#if defined(I3C_SUPPORTED)
+    uint8_t i3c_static7;
+    uint8_t i3c_dyn7;
+#endif
     ism6hg256x_ctx_t reg_ctx;
 };
 #ifdef __cplusplus

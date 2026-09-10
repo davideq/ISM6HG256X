@@ -1,7 +1,7 @@
 /*
-   @file    ISM6HG256X_Wake_Up_Detection.ino
+   @file    ISM6HG256X_Tilt_Detection_I2C.ino
    @author  STMicroelectronics
-   @brief   Example to use the ISM6HG256X Wake Up Detection.
+   @brief   Example to use the ISM6HG256X Tilt Detection.
  *******************************************************************************
    Copyright (c) 2025, STMicroelectronics
    All rights reserved.
@@ -11,8 +11,6 @@
                           opensource.org/licenses/BSD-3-Clause
  *******************************************************************************
 */
-
-
 #include <ISM6HG256XSensor.h>
 
 #define INT1_pin 5
@@ -44,8 +42,8 @@ void setup()
   ISM6HG256X.begin();
   ISM6HG256X.Enable_X();
 
-  // Enable Wake Up Detection.
-  ISM6HG256X.Enable_Wake_Up_Detection(ISM6HG256X_INT1_PIN);
+  // Enable Tilt Detection.
+  ISM6HG256X.Enable_Tilt_Detection(ISM6HG256X_INT1_PIN);
 }
 
 void loop()
@@ -54,13 +52,13 @@ void loop()
     mems_event = 0;
     ISM6HG256X_Event_Status_t status;
     ISM6HG256X.Get_X_Event_Status(&status);
-    if (status.WakeUpStatus) {
+
+    if (status.TiltStatus) {
       // Led blinking.
       digitalWrite(LED_BUILTIN, HIGH);
       delay(100);
       digitalWrite(LED_BUILTIN, LOW);
-
-      Serial.println("Wake up Detected!");
+      Serial.println("Tilt Detected!");
     }
   }
 }

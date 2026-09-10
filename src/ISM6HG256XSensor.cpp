@@ -2,8 +2,8 @@
  ******************************************************************************
  * @file    ISM6HG256XSensor.cpp
  * @author  STMicroelectronics
- * @version V1.0.0
- * @date    05 August 2025
+ * @version V2.1.0
+ * @date    September 2026
  * @brief   Implementation of a ISM6HG256X sensor.
  ******************************************************************************
  * @attention
@@ -47,6 +47,10 @@ ISM6HG256XSensor::ISM6HG256XSensor(TwoWire *i2c, uint8_t address) : dev_i2c(i2c)
   reg_ctx.read_reg = ISM6HG256X_io_read;
   reg_ctx.handle = (void *)this;
   dev_spi = NULL;
+  bus_type = ISM6HG256X_I2C_BUS;
+#if defined(I3C_SUPPORTED)
+  dev_i3c = NULL;
+#endif
   is_initialized = 0;
   acc_is_enabled = 0;
   acc_hg_is_enabled = 0;
@@ -63,22 +67,65 @@ ISM6HG256XSensor::ISM6HG256XSensor(SPIClass *spi, int cs_pin, uint32_t spi_speed
   reg_ctx.read_reg = ISM6HG256X_io_read;
   reg_ctx.handle = (void *)this;
   dev_i2c = NULL;
+  bus_type = ISM6HG256X_SPI_4WIRES_BUS;
+#if defined(I3C_SUPPORTED)
+  dev_i3c = NULL;
+#endif
   is_initialized = 0;
   acc_is_enabled = 0;
   acc_hg_is_enabled = 0;
   gyro_is_enabled = 0;
 }
+#if defined(I3C_SUPPORTED)
+ISM6HG256XSensor::ISM6HG256XSensor(I3CBus *i3c, uint8_t static_addr7) : dev_i3c(i3c), address(static_addr7), i3c_static7(static_addr7), i3c_dyn7(0)
+{
+  reg_ctx.write_reg = ISM6HG256X_io_write;
+  reg_ctx.read_reg = ISM6HG256X_io_read;
+  reg_ctx.handle = (void *)this;
+  dev_i2c = NULL;
+  dev_spi = NULL;
+  is_initialized = 0;
+  acc_is_enabled = 0;
+  acc_hg_is_enabled = 0;
+  gyro_is_enabled = 0;
+}
+
+uint8_t ISM6HG256XSensor::getStaticAddress() const
+{
+  return i3c_static7;
+}
+
+uint8_t ISM6HG256XSensor::getDynAddress() const
+{
+  return i3c_dyn7;
+}
+#endif
 /**
  * @brief  Configure the sensor in order to be used
  * @retval 0 in case of success, an error code otherwise
  */
-ISM6HG256XStatusTypeDef ISM6HG256XSensor::begin()
+ISM6HG256XStatusTypeDef ISM6HG256XSensor::begin(uint8_t new_address)
 {
   if (dev_spi) {
     // Configure CS pin
     pinMode(cs_pin, OUTPUT);
     digitalWrite(cs_pin, HIGH);
   }
+#if defined(I3C_SUPPORTED)
+  if (dev_i3c) {
+    uint8_t id;
+    ism6hg256x_i3c_config_t i3c_config = {0};
+
+    if (new_address < 0x08 || new_address > 0x77) {
+      return ISM6HG256X_ERROR;
+    }
+    address = new_address;
+    i3c_dyn7 = new_address;
+    if (ReadID(&id) != ISM6HG256X_OK || id != ISM6HG256X_ID) {
+      return ISM6HG256X_ERROR;
+    }
+  }
+#endif
   /* Set main memory bank */
   if (Set_Mem_Bank((uint8_t)ISM6HG256X_MAIN_MEM_BANK) != ISM6HG256X_OK) {
     return ISM6HG256X_ERROR;
