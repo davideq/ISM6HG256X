@@ -1132,7 +1132,7 @@ ISM6HG256XStatusTypeDef ISM6HG256XSensor::Enable_Wake_Up_Detection(ISM6HG256X_Se
   if (Set_Wake_Up_Threshold(1, 3) != ISM6HG256X_OK) {
     return ISM6HG256X_ERROR;
   }
-  /* Set wake-up durantion */
+  /* Set wake-up duration */
   if (Set_Wake_Up_Duration(0) != ISM6HG256X_OK) {
     return ISM6HG256X_ERROR;
   }
@@ -1203,7 +1203,7 @@ ISM6HG256XStatusTypeDef ISM6HG256XSensor::Disable_Wake_Up_Detection()
   if (Set_Wake_Up_Threshold(0, 0) != ISM6HG256X_OK) {
     return ISM6HG256X_ERROR;
   }
-  /* Reset wake-up durantion */
+  /* Reset wake-up duration */
   if (Set_Wake_Up_Duration(0) != ISM6HG256X_OK) {
     return ISM6HG256X_ERROR;
   }
