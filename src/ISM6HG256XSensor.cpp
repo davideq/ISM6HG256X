@@ -2,7 +2,7 @@
  ******************************************************************************
  * @file    ISM6HG256XSensor.cpp
  * @author  STMicroelectronics
- * @version V2.1.0
+ * @version V1.1.0
  * @date    September 2026
  * @brief   Implementation of a ISM6HG256X sensor.
  ******************************************************************************
