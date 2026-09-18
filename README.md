@@ -31,6 +31,18 @@ An instance can be created and enabled when the I3C bus is used with SETDASA:
     sensor.Enable_X();
     sensor.Enable_G();
 
+An instance can be created and enabled when the I3C bus is used with ENTDAA (dynamic address discovery):
+
+    ISM6HG256XSensor sensor(&I3C);
+    I3C.begin(I3C_SDA, I3C_SCL, 1000000U);
+    I3C.resetDynamicAddresses();
+    I3C.discover(devices, 8, &found);
+    // find dynAddr by matching ISM6HG256X_I3C_PID_L in discovered devices
+    sensor.begin(dynAddr);
+    I3C.setClock(12500000);
+    sensor.Enable_X();
+    sensor.Enable_G();
+
 An instance can be created and enabled when the SPI bus is used following the procedure below:  
 
     ISM6HG256XSensor sensor(&dev_spi, CS_PIN);  

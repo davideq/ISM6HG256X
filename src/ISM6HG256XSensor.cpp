@@ -84,6 +84,7 @@ ISM6HG256XSensor::ISM6HG256XSensor(I3CBus *i3c, uint8_t static_addr7) : dev_i3c(
   reg_ctx.handle = (void *)this;
   dev_i2c = NULL;
   dev_spi = NULL;
+  bus_type = ISM6HG256X_I3C_BUS;
   is_initialized = 0;
   acc_is_enabled = 0;
   acc_hg_is_enabled = 0;
