@@ -23,7 +23,7 @@ An instance can be created and enabled when the I2C bus is used following the pr
 
 An instance can be created and enabled when the I3C bus is used with SETDASA:
 
-    ISM6HG256XSensor sensor(&I3C, ISM6HG256X_I3C_ADD_H);
+    ISM6HG256XSensor sensor(&I3C, ISM6HG256X_I3C_ADD_L);
     I3C.begin(I3C_SDA, I3C_SCL, 1000000U);
     I3C.resetDynamicAddresses();
     I3C.assignDynamicAddress(sensor.getStaticAddress(), 0x30);
