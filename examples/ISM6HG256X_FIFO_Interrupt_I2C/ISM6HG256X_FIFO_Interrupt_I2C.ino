@@ -1,5 +1,5 @@
 /*
-   @file    ISM6HG256X_FIFO_Interrupt.ino
+   @file    ISM6HG256X_FIFO_Interrupt_I2C.ino
    @author  STMicroelectronics
    @brief   Example to use the ISM6HG256X library with FIFO in interrupt mode.
  *******************************************************************************
