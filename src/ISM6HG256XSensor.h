@@ -57,6 +57,9 @@
 #if defined(I3C_SUPPORTED)
   #define ISM6HG256X_I3C_ADD_L ((uint8_t)(ISM6HG256X_I2C_ADD_L >> 1))
   #define ISM6HG256X_I3C_ADD_H ((uint8_t)(ISM6HG256X_I2C_ADD_H >> 1))
+
+  static const uint64_t ISM6HG256X_I3C_PID_L = 0x02080073120BULL;
+  static const uint64_t ISM6HG256X_I3C_PID_H = 0x02080073920BULL;
 #endif
 
 #define ISM6HG256X_I2C_BUS                     0U

@@ -29,12 +29,24 @@ void setup()
     while (1) {}
   }
 
+  uint8_t ismDynAddr = 0U;
+
   for (size_t index = 0; index < found; ++index) {
-    if (sensor.begin(devices[index].dynAddr) == ISM6HG256X_OK) {
+    Serial.println(devices[index].pid, HEX);
+    if (devices[index].pid == ISM6HG256X_I3C_PID_L) {
+      ismDynAddr = devices[index].dynAddr;
+      Serial.print("ismDynAddr=");
+      Serial.println(ismDynAddr, HEX);
       break;
     }
   }
-  if (sensor.getDynAddress() == 0U) {
+
+  if (ismDynAddr == 0U) {
+    Serial.println("ISM6HG256X not found");
+    while (1) {}
+  }
+  if (sensor.begin(ismDynAddr) != ISM6HG256X_OK) {
+    Serial.println("sensor.begin() failed");
     while (1) {}
   }
   if (!I3C.setClock(12500000)) {
