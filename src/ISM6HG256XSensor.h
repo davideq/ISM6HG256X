@@ -2,7 +2,7 @@
  ******************************************************************************
  * @file    ISM6HG256XSensor.h
  * @author  STMicroelectronics
- * @version V1.1.0
+ * @version V2.1.0
  * @date    September 2026
  * @brief   Abstract Class of a ISM6HG256X sensor.
  ******************************************************************************
